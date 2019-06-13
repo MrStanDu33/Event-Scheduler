@@ -5,21 +5,11 @@ class Event
 		var i = 0;
 		while (i < data.length)
 		{
-			let key = this.getKey(data, i);
-			let value = this.getValue(data, i);
+			let key = data.slice(i, data.indexOf(":", i));
+			let value = data.slice(data.indexOf(":", i) + 1, data.indexOf("\n", i));
 			this[key] = value;
 			i = i + key.length + value.length + 2;
 		}
-	}
-
-	getKey(data, i)
-	{
-		return (data.slice(i, data.indexOf(":", i)));
-	}
-
-	getValue(data, i)
-	{
-		return (data.slice(data.indexOf(":", i) + 1, data.indexOf("\n", i)));
 	}
 }
 
