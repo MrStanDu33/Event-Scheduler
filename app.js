@@ -17,7 +17,7 @@ class Calendar
 {
 	constructor(url)
 	{
-		this.data =  []
+		this.eventData =  [];
 		this.events = [];
 		$.ajax(
 		{
@@ -29,7 +29,7 @@ class Calendar
 		{
 			if (data.length != 0)
 			{
-				this.data = data;
+				this.eventData = data;
 				this.buildEvents();
 			}
 		});
@@ -37,12 +37,12 @@ class Calendar
 
 	buildEvents()
 	{
-		var i = this.data.indexOf("BEGIN:VEVENT", i);
-		while (this.data.indexOf("BEGIN:VEVENT", i) > 0)
+		var i = this.eventData.indexOf("BEGIN:VEVENT", i);
+		while (this.eventData.indexOf("BEGIN:VEVENT", i) > 0)
 		{
-			let start = this.data.indexOf("BEGIN:VEVENT", i) + 14;
-			let end = this.data.indexOf("END:VEVENT", start);
-			let eventData = this.data.slice(start, end);
+			let start = this.eventData.indexOf("BEGIN:VEVENT", i) + 14;
+			let end = this.eventData.indexOf("END:VEVENT", start);
+			let eventData = this.eventData.slice(start, end);
 			event = new Event(eventData);
 			this.events[event.DTSTART.slice(0, event.DTSTART.indexOf("T"))] = event;
 			i = i + eventData.length;
