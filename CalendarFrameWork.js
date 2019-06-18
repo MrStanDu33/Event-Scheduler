@@ -4,7 +4,7 @@ var extend = function ()
 	var deep = false;
 	var i = 0;
 	var length = arguments.length;
-	if (Object.prototype.toString.call( arguments[0] ) === '[object Boolean]')
+	if (Object.prototype.toString.call( arguments[0] ) === "[object Boolean]")
 	{
 		deep = arguments[0];
 		i++;
@@ -15,7 +15,7 @@ var extend = function ()
 		{
 			if (Object.prototype.hasOwnProperty.call(obj, prop))
 			{
-				if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]')
+				if (deep && Object.prototype.toString.call(obj[prop]) === "[object Object]")
 				{
 					extended[prop] = extend(true, extended[prop], obj[prop]);
 				}
@@ -92,7 +92,7 @@ CustomCalendar.prototype =
 
 	buildEvents: function()
 	{
-		var i = this.eventData.indexOf("BEGIN:VEVENT", 0);
+		var i = this.eventData.indexOf("BEGIN:VEVENT");
 		while (this.eventData.indexOf("BEGIN:VEVENT", i) > 0)
 		{
 			let start = this.eventData.indexOf("BEGIN:VEVENT", i) + 14;
@@ -129,7 +129,7 @@ CustomCalendar.prototype =
 
 	setMonth: function()
 	{
-		this.displayed.month = this.settings.months[this.displayed.referral.getMonth()]
+		this.displayed.month = this.settings.months[this.displayed.referral.getMonth()];
 	},
 
 	buildCalendar: function()
@@ -217,7 +217,7 @@ CustomCalendar.prototype =
 		{
 			if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
 			{
-				this.container.querySelector('td[data-day="'+Number(event.start.day)+'"]').classList.add("event");
+				this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]").classList.add("event");
 			}
 		});
 	},
@@ -228,7 +228,7 @@ CustomCalendar.prototype =
 	},
 };
 
-function calendarFrameWork (settings)
+function calendarFrameWork(settings)
 {
 	Object.defineProperty(this, 'defaultOptions',
 	{
