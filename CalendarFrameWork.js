@@ -113,7 +113,7 @@ CustomCalendar.prototype =
 		xhr.open("GET", this.settings.url, true);
 		xhr.onload = function(e)
 		{
-			if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText.length != 0)
+			if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText.length !== 0)
 			{
 				self.eventData = xhr.responseText;
 				self.buildEvents();
@@ -144,7 +144,7 @@ CustomCalendar.prototype =
 
 	printMonthTitle: function()
 	{
-		this.monthContainer.innerHTML = this.displayed.month;
+		this.monthContainer.textContent = this.displayed.month;
 	},
 
 	printDaysHeader: function()
@@ -158,7 +158,7 @@ CustomCalendar.prototype =
 		{
 			let td = document.createElement("td");
 			td.style.color = self.settings.altColor;
-			td.innerHTML = day;
+			td.textContent = day;
 			daysHeader.appendChild(td);
 		});
 	},
@@ -177,7 +177,7 @@ CustomCalendar.prototype =
 			}
 			let day = document.createElement("td");
 			if (i >= startDay)
-				day.innerHTML = i - startDay + 1;
+				day.textContent = i - startDay + 1;
 			if (i - startDay + 1 == this.getDay(this.displayed.referral))
 				day.classList.add("active");
 			if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
