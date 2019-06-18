@@ -92,7 +92,7 @@ customCalendar.prototype =
 
 	buildEvents: function()
 	{
-		var i = this.eventData.indexOf("BEGIN:VEVENT", i);
+		var i = this.eventData.indexOf("BEGIN:VEVENT", 0);
 		while (this.eventData.indexOf("BEGIN:VEVENT", i) > 0)
 		{
 			let start = this.eventData.indexOf("BEGIN:VEVENT", i) + 14;
