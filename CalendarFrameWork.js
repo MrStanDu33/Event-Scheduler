@@ -11,13 +11,13 @@ var extend = function ()
 	}
 	var merge = function (obj)
 	{
-		for ( var prop in obj )
+		for (var prop in obj)
 		{
-			if ( Object.prototype.hasOwnProperty.call( obj, prop ) )
+			if (Object.prototype.hasOwnProperty.call(obj, prop))
 			{
-				if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' )
+				if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]')
 				{
-					extended[prop] = extend( true, extended[prop], obj[prop] );
+					extended[prop] = extend(true, extended[prop], obj[prop]);
 				}
 				else
 				{
@@ -39,7 +39,7 @@ var customCalendar = function (options)
 	this.settings = extend(true, {}, this.defaultOptions, options);
 	if (this.settings.CORSProxy)
 		this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
-	this.displayed = {}
+	this.displayed = {};
 	this.displayed.referral = new Date();
 	this.container = document.getElementById(this.settings.calendarId);
 	this.monthContainer = document.getElementById(this.settings.monthContainerId);
@@ -66,11 +66,11 @@ customCalendar.prototype =
 			while (i < data.length)
 			{
 				let key = data.slice(i, data.indexOf(":", i));
-				let endValue = data.indexOf("\n", i)
+				let endValue = data.indexOf("\n", i);
 				while (data[endValue + 1] === " ")
 				{
 					data = data.slice(0, endValue) + data.slice(endValue + 2);
-					endValue = data.indexOf("\n", endValue - 1) + 1
+					endValue = data.indexOf("\n", endValue - 1) + 1;
 				}
 				let value = data.slice(data.indexOf(":", i) + 1, endValue);
 				i = i + key.length + value.length + 2;
@@ -157,7 +157,7 @@ customCalendar.prototype =
 		{
 			let td = document.createElement("td");
 			td.style.color = this.settings.altColor;
-			td.innerHTML = day
+			td.innerHTML = day;
 			daysHeader.appendChild(td);
 		});
 	},
@@ -224,7 +224,7 @@ customCalendar.prototype =
 
 	printEventList: function()
 	{
-		return
+		return;
 	},
 };
 
