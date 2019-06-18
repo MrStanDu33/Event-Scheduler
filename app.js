@@ -72,13 +72,15 @@ Object.defineProperty(calendar, 'defaultOptions',
 {
 	value:
 	{
-		days: [],
-		elementId: null,
-		months: [],
+		days: ["S", "M", "T", "W", "T", "F", "S"],
+		calendarId: "calendar",
+		months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
 		url: null,
-		weekend: [],
-		altColorClass: "",
+		weekend: ["S", "S"],
+		altColor: "#B7B7B7",
 		CORSProxy: false,
+		monthContainerId: "month",
+		eventContainer: "eventContainer",
 	},
 	writable: false,
 	enumerable: true,
@@ -95,8 +97,10 @@ Object.defineProperty(calendar, 'defaultOptions',
 			this.settings = extend(true, {}, calendar.defaultOptions, options);
 			if (this.settings.CORSProxy)
 				this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
-			this.container = document.getElementById(this.settings.elementId);
+			this.container = document.getElementById(this.settings.calendarId);
+			this.eventContainer = document.getElementById(this.settings.calendarId);
 			this.events = [];
+			this.buildCalendar();
 			this.setCurrentYear();
 			this.setCurrentMonth();
 			this.setDaysHeader();
@@ -106,6 +110,14 @@ Object.defineProperty(calendar, 'defaultOptions',
 
 		customCalendar.prototype =
 		{
+			buildCalendar: function()
+			{
+				let table = document.createElement("table");
+				this.container.appendChild(table);
+				let tbody = document.createElement("tbody");
+				table.appendChild(tbody);
+			},
+
 			buildEvents: function()
 			{
 				var i = this.eventData.indexOf("BEGIN:VEVENT", i);
@@ -128,20 +140,25 @@ Object.defineProperty(calendar, 'defaultOptions',
 			setCurrentMonth: function()
 			{
 				this.container.getElementsByTagName("table")[0].dataset.month =  this.getCurrentMonth();
-				let monthContainer = this.container.getElementsByClassName("month")[0];
+				let monthContainer = document.getElementById(this.settings.monthContainerId);
 				let currentMonth = this.getCurrentMonth();
 				monthContainer.innerHTML = currentMonth;
 			},
 		
 			setDaysHeader: function()
 			{
+				let daysHeader = document.createElement("tr");
+				this.container.getElementsByTagName("tbody")[0].appendChild(daysHeader);
+				daysHeader.classList.add("days");
 				let days = this.container.getElementsByClassName("days")[0].getElementsByTagName("td");
 				var i = 0;
-				for (let day of days)
+				this.settings.days.forEach(day =>
 				{
-					day.innerHTML = this.settings.days[i];
-					i ++;
-				}
+					let td = document.createElement("td");
+					td.style.color = this.settings.altColor;
+					td.innerHTML = day
+					daysHeader.appendChild(td);
+				});
 			},
 		
 			printDays: function()
@@ -162,7 +179,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 					if (i - startDay + 1 == this.getDay(new Date()))
 						day.classList.add("active");
 					if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
-						day.classList.add(this.settings.altColorClass);
+						day.style.color = this.settings.altColor;
 					day.dataset.day = i - startDay + 1;
 					week.appendChild(day);
 					i++;
@@ -224,6 +241,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 					{
 						let day = this.container.querySelector('td[data-day="'+Number(event.start.day)+'"]');
 						day.classList.add("event");
+						//let eventElement = this.container.createElement("td");
 					}
 				});
 			},
@@ -232,11 +250,9 @@ Object.defineProperty(calendar, 'defaultOptions',
 		calendar = new customCalendar(
 		{
 			url: "/calendar.ics", 
-			elementId: "calendar", 
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
 			days: ["L", "M", "M", "J", "V", "S", "D"],
 			weekend: ["S", "D"],
-			altColorClass: "brand--color--light-grey",
 			CORSProxy: false,
 		});
 

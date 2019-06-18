@@ -1,0 +1,249 @@
+@font-face
+{
+	font-family: "Futura";
+	src: url("./FuturaBT-Book.woff") format("woff");
+}
+
+*
+{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+html
+{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body
+{
+	margin: 0;
+	position: relative;
+	min-height: 100%;
+	overflow-x: hidden;
+	font-family: Futura;
+}
+
+a
+{
+	text-decoration: none;
+	color: inherit;
+}
+
+ul
+{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.pointer
+{
+	cursor: pointer;
+}
+
+.helper
+{
+	cursor: help;
+}
+
+.tohide
+{
+	display: none;
+}
+
+.toshow
+{
+	display: inherit;
+}
+
+.margincenter
+{
+	margin: 0 auto;
+}
+
+.marginleft
+{
+	margin-right: auto;
+	margin-left: 0;
+}
+
+.marginright
+{
+	margin-left: auto;
+	margin-right: 0;
+}
+
+.textcenter
+{
+	text-align: center;
+}
+
+.textleft
+{
+	text-align: left;
+}
+
+.textright
+{
+	text-align: right;
+}
+
+.fitContent
+{
+	width: fit-content;
+}
+
+.block
+{
+	display: block;
+}
+
+.flex
+{
+	display: flex;
+}
+
+.inline
+{
+	display: inline-block;
+}
+
+.brand--color--light-grey
+{
+	color: #B7B7B7;
+}
+
+.brand--color--grey
+{
+	color: #545553;
+}
+
+.brand--color--red
+{
+	color: #D4394E;
+}
+
+.brand--background-color--light-grey
+{
+	color: #B7B7B7;
+}
+
+.brand--background-color--grey
+{
+	background-color: #545553;
+}
+
+.brand--background-color--red
+{
+	background-color: #D4394E;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+h1.title
+{
+	text-transform: uppercase;
+	font-size: 50px;
+	margin-top: 50px;
+	position: relative;
+}
+
+h1.title:before
+{
+	content: "";
+	display: block;
+	position: absolute;
+	height : 0;
+	width : 0;
+	border-top : 35px solid transparent;
+	border-bottom : 35px solid transparent;
+	border-left : 60px solid #D4394E;
+	top: 50%;
+	left: -100px;
+	transform: translateY(-50%);
+}
+
+h1.title:after
+{
+	content: "";
+	display: block;
+	position: absolute;
+	height : 0;
+	width : 0;
+	border-top : 35px solid transparent;
+	border-right : 60px solid #D4394E;
+	border-bottom : 35px solid transparent;
+	top: 50%;
+	right: -100px;
+	transform: translateY(-50%);
+}
+
+div.container
+{
+	width: 95%;
+	max-width: 320px;
+	margin-top: 100px;
+	flex-flow: row wrap;
+}
+
+h2.month
+{
+	text-transform: uppercase;
+	font-size: 40px;
+}
+
+div#calendar>table
+{
+	font-weight: bold;
+}
+
+div#calendar>table>tbody>tr>td
+{
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+}
+
+div#calendar>table>tbody>tr>td.event
+{
+	border-radius: 50%;
+	background-color: rgba(212, 57, 78, 0.2);
+}
+
+div#calendar>table>tbody>tr>td.active
+{
+	position: relative;
+}
+
+div#calendar>table>tbody>tr>td.active:before
+{
+	content: "";
+	display: block;
+	position: absolute;
+	height : 7px;
+	width : 7px;
+	background-color: #D4394E;
+	border-radius: 50%;
+	bottom: 5px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+
+
+

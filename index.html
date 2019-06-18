@@ -10,23 +10,10 @@
 </head>
 <body>
 	<h1 class="title fitContent margincenter block brand--color--grey">évènements</h1>
-	<div class="flex margincenter">
-		<div id="calendar">
-			<h2 class="month brand--color--red textcenter"></h2>
-			<table>
-				<tbody>
-					<tr class="days">
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-						<td class="brand--color--light-grey"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+	<div class="margincenter container">
+		<h2 class="month brand--color--red textcenter" id="month"></h2>
+		<div id="calendar"></div>
+		<ul class="flex" id="eventContainer"></ul>
 	</div>
 </body>
 </html>
