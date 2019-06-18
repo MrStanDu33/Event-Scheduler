@@ -1,42 +1,10 @@
-class Event
-{
-	constructor(data)
-	{
-		var i = 0;
-		while (i < data.length)
-		{
-			let key = data.slice(i, data.indexOf(":", i));
-			let endValue = data.indexOf("\n", i)
-			while (data[endValue + 1] === " ")
-			{
-				data = data.slice(0, endValue) + data.slice(endValue + 2);
-				endValue = data.indexOf("\n", endValue - 1) + 1
-			}
-			let value = data.slice(data.indexOf(":", i) + 1, endValue);
-			i = i + key.length + value.length + 2;
-			value = value.replace(/(\r\n|\n|\r)/gm, "");
-			this[key] = value;
-		}
-		let startDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
-		let endDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
-		this.start = {};
-		this.start.year = startDate.substr(0, 4);
-		this.start.month = startDate.substr(4, 2);
-		this.start.day = startDate.substr(6, 2);
-		this.end = {};
-		this.end.year = endDate.substr(0, 4);
-		this.end.month = endDate.substr(4, 2);
-		this.end.day = endDate.substr(6, 2);
-	}
-}
-
 var extend = function ()
 {
 	var extended = {};
 	var deep = false;
 	var i = 0;
 	var length = arguments.length;
-	if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' )
+	if (Object.prototype.toString.call( arguments[0] ) === '[object Boolean]')
 	{
 		deep = arguments[0];
 		i++;
@@ -81,6 +49,9 @@ Object.defineProperty(calendar, 'defaultOptions',
 		CORSProxy: false,
 		monthContainerId: "month",
 		eventContainer: "eventContainer",
+		displayCalendar: false,
+		displayMonth: false,
+		displayEvent: false,
 	},
 	writable: false,
 	enumerable: true,
@@ -110,6 +81,38 @@ Object.defineProperty(calendar, 'defaultOptions',
 
 		customCalendar.prototype =
 		{
+			Event: class Event
+			{
+				constructor(data)
+				{
+					var i = 0;
+					while (i < data.length)
+					{
+						let key = data.slice(i, data.indexOf(":", i));
+						let endValue = data.indexOf("\n", i)
+						while (data[endValue + 1] === " ")
+						{
+							data = data.slice(0, endValue) + data.slice(endValue + 2);
+							endValue = data.indexOf("\n", endValue - 1) + 1
+						}
+						let value = data.slice(data.indexOf(":", i) + 1, endValue);
+						i = i + key.length + value.length + 2;
+						value = value.replace(/(\r\n|\n|\r)/gm, "");
+						this[key] = value;
+					}
+					let startDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
+					let endDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
+					this.start = {};
+					this.start.year = startDate.substr(0, 4);
+					this.start.month = startDate.substr(4, 2);
+					this.start.day = startDate.substr(6, 2);
+					this.end = {};
+					this.end.year = endDate.substr(0, 4);
+					this.end.month = endDate.substr(4, 2);
+					this.end.day = endDate.substr(6, 2);
+				}
+			},
+
 			buildCalendar: function()
 			{
 				let table = document.createElement("table");
@@ -126,12 +129,12 @@ Object.defineProperty(calendar, 'defaultOptions',
 					let start = this.eventData.indexOf("BEGIN:VEVENT", i) + 14;
 					let end = this.eventData.indexOf("END:VEVENT", start);
 					let eventData = this.eventData.slice(start, end);
-					event = new Event(eventData);
+					event = new this.Event(eventData);
 					this.events[event.DTSTART.slice(0, event.DTSTART.indexOf("T"))] = event;
 					i = i + eventData.length;
 				}
 			},
-		
+
 			setCurrentYear: function()
 			{
 				this.container.getElementsByTagName("table")[0].dataset.year = "2019";
@@ -160,7 +163,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 					daysHeader.appendChild(td);
 				});
 			},
-		
+
 			printDays: function()
 			{
 				let startDay = this.getFirstDayIndex(this.getFirstDayName(new Date()));
@@ -185,17 +188,17 @@ Object.defineProperty(calendar, 'defaultOptions',
 					i++;
 				}
 			},
-		
+
 			getCurrentMonth: function()
 			{
 				return(this.settings.months[(new Date).getMonth()]);
 			},
-		
+
 			getDay: function(date)
 			{
 				return(date.getDate());
 			},
-		
+
 			getFirstDayName: function(day)
 			{
 				let date = new Date(day);
@@ -204,12 +207,12 @@ Object.defineProperty(calendar, 'defaultOptions',
 				let FirstDay = new Date(year, month, 1);
 				return(this.settings.days[FirstDay.getDay() - 1]);
 			},
-		
+
 			getLastDayNumber: function(date)
 			{
 				return(new Date(date.getMonth(), date.getYear(), 0).getDate());
 			},
-		
+
 			getFirstDayIndex: function(day)
 			{
 				return(this.settings.days.indexOf(day));
@@ -249,11 +252,14 @@ Object.defineProperty(calendar, 'defaultOptions',
 
 		calendar = new customCalendar(
 		{
-			url: "/calendar.ics", 
+			url: "/calendar.ics",
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
 			days: ["L", "M", "M", "J", "V", "S", "D"],
 			weekend: ["S", "D"],
-			CORSProxy: false,
+			CORSProxy: true,
+			displayCalendar: true,
+			displayMonth: true,
+			displayEvent: false,
 		});
 
 		console.log(calendar);
