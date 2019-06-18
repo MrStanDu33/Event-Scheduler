@@ -15,5 +15,5 @@
 		});
 
 		console.log(calendar);
-	}
+	};
 })();

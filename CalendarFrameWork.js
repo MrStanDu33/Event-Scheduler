@@ -232,7 +232,7 @@ CustomCalendar.prototype =
 
 function calendarFrameWork(settings)
 {
-	Object.defineProperty(this, 'defaultOptions',
+	Object.defineProperty(this, "defaultOptions",
 	{
 		value:
 		{
