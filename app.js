@@ -34,35 +34,37 @@ var extend = function ()
 	return extended;
 };
 
-var calendar = {};
-
-Object.defineProperty(calendar, 'defaultOptions',
-{
-	value:
-	{
-		calendarId: "",
-		monthContainerId: "",
-		eventContainer: "",
-		weekend: ["S", "S"],
-		days: ["S", "M", "T", "W", "T", "F", "S"],
-		months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
-		url: "",
-		altColor: "#B7B7B7",
-		CORSProxy: false,
-	},
-	writable: false,
-	enumerable: true,
-	configurable: false
-});
-
 (function()
 {
 	window.onload = init;
 	function init()
 	{
+		function CalendarFrameWork (settings)
+		{
+			Object.defineProperty(this, 'defaultOptions',
+			{
+				value:
+				{
+					calendarId: "",
+					monthContainerId: "",
+					eventContainer: "",
+					weekend: ["S", "S"],
+					days: ["S", "M", "T", "W", "T", "F", "S"],
+					months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
+					url: "",
+					altColor: "#B7B7B7",
+					CORSProxy: false,
+				},
+				writable: false,
+				enumerable: true,
+				configurable: false
+			});
+			return (new customCalendar(settings));
+		}
+
 		var customCalendar = function (options)
 		{
-			this.settings = extend(true, {}, calendar.defaultOptions, options);
+			this.settings = extend(true, {}, this.defaultOptions, options);
 			if (this.settings.CORSProxy)
 				this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
 			this.displayed = {}
@@ -254,13 +256,13 @@ Object.defineProperty(calendar, 'defaultOptions',
 			},
 		}
 
-		calendar = new customCalendar(
+		var calendar = CalendarFrameWork(
 		{
 			url: "/calendar.ics",
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
 			days: ["L", "M", "M", "J", "V", "S", "D"],
 			weekend: ["S", "D"],
-			CORSProxy: false,
+			CORSProxy: true,
 			calendarId: "calendar",
 			monthContainerId: "month",
 			eventContainer: "eventContainer",
