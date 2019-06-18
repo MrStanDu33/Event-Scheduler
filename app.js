@@ -200,21 +200,19 @@ Object.defineProperty(calendar, 'defaultOptions',
 
 			setEventData: function()
 			{
-				$.ajax(
+				var self = this;
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", this.settings.url, true);
+				xhr.onload = function(e)
 				{
-					type: 'GET',
-					url: this.settings.url,
-					context: this,
-				}).
-				done(function(data)
-				{
-					if (data.length != 0)
+					if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText.length != 0)
 					{
-						this.eventData = data;
-						this.buildEvents();
-						this.insertEvents();
+						self.eventData = xhr.responseText;
+						self.buildEvents();
+						self.insertEvents();
 					}
-				});
+				};
+				xhr.send(null);
 			},
 
 			insertEvents: function()
