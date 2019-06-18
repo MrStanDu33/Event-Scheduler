@@ -4,7 +4,7 @@ var extend = function ()
 	var deep = false;
 	var i = 0;
 	var length = arguments.length;
-	if (Object.prototype.toString.call( arguments[0] ) === '[object Boolean]')
+	if (Object.prototype.toString.call( arguments[0] ) === "[object Boolean]")
 	{
 		deep = arguments[0];
 		i++;
@@ -15,7 +15,7 @@ var extend = function ()
 		{
 			if (Object.prototype.hasOwnProperty.call(obj, prop))
 			{
-				if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]')
+				if (deep && Object.prototype.toString.call(obj[prop]) === "[object Object]")
 				{
 					extended[prop] = extend(true, extended[prop], obj[prop]);
 				}
