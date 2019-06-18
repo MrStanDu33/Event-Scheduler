@@ -34,7 +34,7 @@ var extend = function ()
 	return extended;
 };
 
-var customCalendar = function (options)
+var CustomCalendar = function (options)
 {
 	this.settings = extend(true, {}, this.defaultOptions, options);
 	if (this.settings.CORSProxy)
@@ -56,7 +56,7 @@ var customCalendar = function (options)
 		this.printEventList();
 };
 
-customCalendar.prototype =
+CustomCalendar.prototype =
 {
 	Event: class Event
 	{
@@ -248,5 +248,5 @@ function calendarFrameWork (settings)
 		enumerable: true,
 		configurable: false
 	});
-	return (new customCalendar(settings));
+	return (new CustomCalendar(settings));
 }
