@@ -34,29 +34,6 @@ var extend = function ()
 	return extended;
 };
 
-function CalendarFrameWork (settings)
-{
-	Object.defineProperty(this, 'defaultOptions',
-	{
-		value:
-		{
-			calendarId: "",
-			monthContainerId: "",
-			eventContainer: "",
-			weekend: ["S", "S"],
-			days: ["S", "M", "T", "W", "T", "F", "S"],
-			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
-			url: "",
-			altColor: "#B7B7B7",
-			CORSProxy: false,
-		},
-		writable: false,
-		enumerable: true,
-		configurable: false
-	});
-	return (new customCalendar(settings));
-}
-
 var customCalendar = function (options)
 {
 	this.settings = extend(true, {}, this.defaultOptions, options);
@@ -250,3 +227,26 @@ customCalendar.prototype =
 		return
 	},
 };
+
+function CalendarFrameWork (settings)
+{
+	Object.defineProperty(this, 'defaultOptions',
+	{
+		value:
+		{
+			calendarId: "",
+			monthContainerId: "",
+			eventContainer: "",
+			weekend: ["S", "S"],
+			days: ["S", "M", "T", "W", "T", "F", "S"],
+			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
+			url: "",
+			altColor: "#B7B7B7",
+			CORSProxy: false,
+		},
+		writable: false,
+		enumerable: true,
+		configurable: false
+	});
+	return (new customCalendar(settings));
+}
