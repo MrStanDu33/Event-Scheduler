@@ -71,7 +71,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 	window.onload = init;
 	function init()
 	{
-		var myCalendar = function (options)
+		var customCalendar = function (options)
 		{
 			this.settings = extend(true, {}, calendar.defaultOptions, options);
 			this.container = document.getElementById(this.settings.elementId);
@@ -82,7 +82,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 			this.setEventData();
 		};
 
-		myCalendar.prototype =
+		customCalendar.prototype =
 		{
 			buildEvents: function()
 			{
@@ -188,7 +188,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 			},
 		}
 
-		calendar = new myCalendar(
+		calendar = new customCalendar(
 		{
 			url: "/calendar.ics", 
 			elementId: "calendar", 
