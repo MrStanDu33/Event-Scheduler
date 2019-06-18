@@ -228,7 +228,7 @@ customCalendar.prototype =
 	},
 };
 
-function CalendarFrameWork (settings)
+function calendarFrameWork (settings)
 {
 	Object.defineProperty(this, 'defaultOptions',
 	{
