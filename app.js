@@ -12,8 +12,19 @@
 			calendarId: "calendar",
 			monthContainerId: "month",
 			eventContainer: "eventContainer",
-		});
+			onDayClick: function()
+			{
+				//calendar.getEvent(this);
+			},
+			prevMonthClick: function()
+			{
 
+			},
+			nextMonthClick: function()
+			{
+
+			},
+		});
 		console.log(calendar);
 	};
 })();

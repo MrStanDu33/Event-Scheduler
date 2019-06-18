@@ -210,14 +210,22 @@ CustomCalendar.prototype =
 
 	printEventsDays: function()
 	{
-		var self = this;
-		this.events.forEach(function(event)
+		for (let eventNode in this.events)
 		{
-			if (event.start.year == self.displayed.year && self.settings.months[Number(event.start.month) - 1] == self.displayed.month)
+			let event = this.events[eventNode];
+			if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
 			{
-				self.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]").classList.add("event");
+				var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
+				day.classList.add("event");
+				day.onclick = this.settings.onDayClick;
+				day.dataset.event = event.DTSTART.slice(0, event.DTSTART.indexOf("T"));
 			}
-		});
+		}
+	},
+
+	getEvent: function(e)
+	{
+		return (this.events[e.dataset.event]);
 	},
 
 	printEventList: function()
@@ -241,6 +249,9 @@ function calendarFrameWork(settings)
 			url: "",
 			altColor: "#B7B7B7",
 			CORSProxy: false,
+			onDayClick: function(){},
+			prevMonthClick: function(){},
+			nextMonthClick: function(){},
 		},
 		writable: false,
 		enumerable: true,
