@@ -8,10 +8,14 @@ class Event
 			let key = data.slice(i, data.indexOf(":", i));
 			let endValue = data.indexOf("\n", i)
 			while (data[endValue + 1] === " ")
-				endValue = data.indexOf("\n", endValue + 1)
+			{
+				data = data.slice(0, endValue) + data.slice(endValue + 2);
+				endValue = data.indexOf("\n", endValue - 1) + 1
+			}
 			let value = data.slice(data.indexOf(":", i) + 1, endValue);
-			this[key] = value;
 			i = i + key.length + value.length + 2;
+			value = value.replace(/(\r\n|\n|\r)/gm, "");
+			this[key] = value;
 		}
 		let startDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
 		let endDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
