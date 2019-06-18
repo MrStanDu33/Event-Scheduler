@@ -40,18 +40,15 @@ Object.defineProperty(calendar, 'defaultOptions',
 {
 	value:
 	{
-		days: ["S", "M", "T", "W", "T", "F", "S"],
-		calendarId: "calendar",
-		months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
-		url: null,
+		calendarId: "",
+		monthContainerId: "",
+		eventContainer: "",
 		weekend: ["S", "S"],
+		days: ["S", "M", "T", "W", "T", "F", "S"],
+		months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
+		url: "",
 		altColor: "#B7B7B7",
 		CORSProxy: false,
-		monthContainerId: "month",
-		eventContainer: "eventContainer",
-		displayCalendar: false,
-		displayMonth: false,
-		displayEvent: false,
 	},
 	writable: false,
 	enumerable: true,
@@ -68,15 +65,21 @@ Object.defineProperty(calendar, 'defaultOptions',
 			this.settings = extend(true, {}, calendar.defaultOptions, options);
 			if (this.settings.CORSProxy)
 				this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
+			this.displayed = {}
+			this.displayed.referral = new Date();
 			this.container = document.getElementById(this.settings.calendarId);
-			this.eventContainer = document.getElementById(this.settings.calendarId);
+			this.monthContainer = document.getElementById(this.settings.monthContainerId);
+			this.eventContainer = document.getElementById(this.settings.eventContainerId);
 			this.events = [];
-			this.buildCalendar();
-			this.setCurrentYear();
-			this.setCurrentMonth();
-			this.setDaysHeader();
-			this.printDays();
-			this.setEventData();
+			this.getEvents();
+			this.setYear();
+			this.setMonth();
+			if (this.container)
+				this.buildCalendar();
+			if (this.monthContainer)
+				this.printMonthTitle();
+			if (this.eventContainer)
+				this.printEventList();
 		};
 
 		customCalendar.prototype =
@@ -113,14 +116,6 @@ Object.defineProperty(calendar, 'defaultOptions',
 				}
 			},
 
-			buildCalendar: function()
-			{
-				let table = document.createElement("table");
-				this.container.appendChild(table);
-				let tbody = document.createElement("tbody");
-				table.appendChild(tbody);
-			},
-
 			buildEvents: function()
 			{
 				var i = this.eventData.indexOf("BEGIN:VEVENT", i);
@@ -133,27 +128,56 @@ Object.defineProperty(calendar, 'defaultOptions',
 					this.events[event.DTSTART.slice(0, event.DTSTART.indexOf("T"))] = event;
 					i = i + eventData.length;
 				}
+				if (this.container)
+					this.printEventsDays();
 			},
 
-			setCurrentYear: function()
+			getEvents: function()
 			{
-				this.container.getElementsByTagName("table")[0].dataset.year = "2019";
+				var self = this;
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", this.settings.url, true);
+				xhr.onload = function(e)
+				{
+					if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText.length != 0)
+					{
+						self.eventData = xhr.responseText;
+						self.buildEvents();
+					}
+				};
+				xhr.send(null);
+			},
+
+			setYear: function()
+			{
+				this.displayed.year = this.displayed.referral.getFullYear();
 			},
 		
-			setCurrentMonth: function()
+			setMonth: function()
 			{
-				this.container.getElementsByTagName("table")[0].dataset.month =  this.getCurrentMonth();
-				let monthContainer = document.getElementById(this.settings.monthContainerId);
-				let currentMonth = this.getCurrentMonth();
-				monthContainer.innerHTML = currentMonth;
+				this.displayed.month = this.settings.months[this.displayed.referral.getMonth()]
+			},
+
+			buildCalendar: function()
+			{
+				let table = document.createElement("table");
+				this.container.appendChild(table);
+				let tbody = document.createElement("tbody");
+				table.appendChild(tbody);
+				this.printDaysHeader();
+				this.printDays();
 			},
 		
-			setDaysHeader: function()
+			printMonthTitle: function()
+			{
+				this.monthContainer.innerHTML = this.displayed.month;
+			},
+		
+			printDaysHeader: function()
 			{
 				let daysHeader = document.createElement("tr");
 				this.container.getElementsByTagName("tbody")[0].appendChild(daysHeader);
 				daysHeader.classList.add("days");
-				let days = this.container.getElementsByClassName("days")[0].getElementsByTagName("td");
 				var i = 0;
 				this.settings.days.forEach(day =>
 				{
@@ -166,10 +190,10 @@ Object.defineProperty(calendar, 'defaultOptions',
 
 			printDays: function()
 			{
-				let startDay = this.getFirstDayIndex(this.getFirstDayName(new Date()));
+				let startDay = this.getFirstDayIndex(this.getFirstDayName(this.displayed.referral));
 				var i = 0;
 				var week = 0;
-				while ((i - startDay) != this.getLastDayNumber(new Date()))
+				while ((i - startDay) != this.getLastDayNumber(this.displayed.referral))
 				{
 					if (!(i % 7))
 					{
@@ -179,7 +203,7 @@ Object.defineProperty(calendar, 'defaultOptions',
 					let day = document.createElement("td");
 					if (i >= startDay)
 						day.innerHTML = i - startDay + 1;
-					if (i - startDay + 1 == this.getDay(new Date()))
+					if (i - startDay + 1 == this.getDay(this.displayed.referral))
 						day.classList.add("active");
 					if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
 						day.style.color = this.settings.altColor;
@@ -187,11 +211,6 @@ Object.defineProperty(calendar, 'defaultOptions',
 					week.appendChild(day);
 					i++;
 				}
-			},
-
-			getCurrentMonth: function()
-			{
-				return(this.settings.months[(new Date).getMonth()]);
 			},
 
 			getDay: function(date)
@@ -218,35 +237,20 @@ Object.defineProperty(calendar, 'defaultOptions',
 				return(this.settings.days.indexOf(day));
 			},
 
-			setEventData: function()
-			{
-				var self = this;
-				var xhr = new XMLHttpRequest();
-				xhr.open("GET", this.settings.url, true);
-				xhr.onload = function(e)
-				{
-					if (xhr.readyState === 4 && xhr.status === 200 && xhr.responseText.length != 0)
-					{
-						self.eventData = xhr.responseText;
-						self.buildEvents();
-						self.insertEvents();
-					}
-				};
-				xhr.send(null);
-			},
-
-			insertEvents: function()
+			printEventsDays: function()
 			{
 				this.events.forEach(event =>
 				{
-					if (	event.start.year == this.container.getElementsByTagName("table")[0].dataset.year &&
-						this.settings.months[Number(event.start.month) - 1] == this.container.getElementsByTagName("table")[0].dataset.month)
+					if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
 					{
-						let day = this.container.querySelector('td[data-day="'+Number(event.start.day)+'"]');
-						day.classList.add("event");
-						//let eventElement = this.container.createElement("td");
+						this.container.querySelector('td[data-day="'+Number(event.start.day)+'"]').classList.add("event");
 					}
 				});
+			},
+
+			printEventList: function()
+			{
+				return
 			},
 		}
 
@@ -256,10 +260,10 @@ Object.defineProperty(calendar, 'defaultOptions',
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
 			days: ["L", "M", "M", "J", "V", "S", "D"],
 			weekend: ["S", "D"],
-			CORSProxy: true,
-			displayCalendar: true,
-			displayMonth: true,
-			displayEvent: false,
+			CORSProxy: false,
+			calendarId: "calendar",
+			monthContainerId: "month",
+			eventContainer: "eventContainer",
 		});
 
 		console.log(calendar);
