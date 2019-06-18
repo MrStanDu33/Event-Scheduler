@@ -6,10 +6,23 @@ class Event
 		while (i < data.length)
 		{
 			let key = data.slice(i, data.indexOf(":", i));
-			let value = data.slice(data.indexOf(":", i) + 1, data.indexOf("\n", i));
+			let endValue = data.indexOf("\n", i)
+			while (data[endValue + 1] === " ")
+				endValue = data.indexOf("\n", endValue + 1)
+			let value = data.slice(data.indexOf(":", i) + 1, endValue);
 			this[key] = value;
 			i = i + key.length + value.length + 2;
 		}
+		let startDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
+		let endDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
+		this.start = {};
+		this.start.year = startDate.substr(0, 4);
+		this.start.month = startDate.substr(4, 2);
+		this.start.day = startDate.substr(6, 2);
+		this.end = {};
+		this.end.year = endDate.substr(0, 4);
+		this.end.month = endDate.substr(4, 2);
+		this.end.day = endDate.substr(6, 2);
 	}
 }
 
@@ -59,7 +72,9 @@ Object.defineProperty(calendar, 'defaultOptions',
 		elementId: null,
 		months: [],
 		url: null,
-		weekend: []
+		weekend: [],
+		altColorClass: "",
+		CORSProxy: false,
 	},
 	writable: false,
 	enumerable: true,
@@ -74,8 +89,11 @@ Object.defineProperty(calendar, 'defaultOptions',
 		var customCalendar = function (options)
 		{
 			this.settings = extend(true, {}, calendar.defaultOptions, options);
+			if (this.settings.CORSProxy)
+				this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
 			this.container = document.getElementById(this.settings.elementId);
 			this.events = [];
+			this.setCurrentYear();
 			this.setCurrentMonth();
 			this.setDaysHeader();
 			this.printDays();
@@ -98,8 +116,14 @@ Object.defineProperty(calendar, 'defaultOptions',
 				}
 			},
 		
+			setCurrentYear: function()
+			{
+				this.container.getElementsByTagName("table")[0].dataset.year = "2019";
+			},
+		
 			setCurrentMonth: function()
 			{
+				this.container.getElementsByTagName("table")[0].dataset.month =  this.getCurrentMonth();
 				let monthContainer = this.container.getElementsByClassName("month")[0];
 				let currentMonth = this.getCurrentMonth();
 				monthContainer.innerHTML = currentMonth;
@@ -134,7 +158,8 @@ Object.defineProperty(calendar, 'defaultOptions',
 					if (i - startDay + 1 == this.getDay(new Date()))
 						day.classList.add("active");
 					if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
-						day.classList.add("brand--color--light-grey");
+						day.classList.add(this.settings.altColorClass);
+					day.dataset.day = i - startDay + 1;
 					week.appendChild(day);
 					i++;
 				}
@@ -183,6 +208,20 @@ Object.defineProperty(calendar, 'defaultOptions',
 					{
 						this.eventData = data;
 						this.buildEvents();
+						this.insertEvents();
+					}
+				});
+			},
+
+			insertEvents: function()
+			{
+				this.events.forEach(event =>
+				{
+					if (	event.start.year == this.container.getElementsByTagName("table")[0].dataset.year &&
+						this.settings.months[Number(event.start.month) - 1] == this.container.getElementsByTagName("table")[0].dataset.month)
+					{
+						let day = this.container.querySelector('td[data-day="'+Number(event.start.day)+'"]');
+						day.classList.add("event");
 					}
 				});
 			},
@@ -194,7 +233,9 @@ Object.defineProperty(calendar, 'defaultOptions',
 			elementId: "calendar", 
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
 			days: ["L", "M", "M", "J", "V", "S", "D"],
-			weekend: ["S", "D"]
+			weekend: ["S", "D"],
+			altColorClass: "brand--color--light-grey",
+			CORSProxy: false,
 		});
 
 		console.log(calendar);
