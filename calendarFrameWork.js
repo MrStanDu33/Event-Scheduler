@@ -30,14 +30,9 @@ var extend = function ()
 	return extended;
 };
 
-function calendarFrameWork(settings)
-{
-	return (new CalendarFrameWork(settings));
-}
-
 var CalendarFrameWork = function (options)
 {
-	Object.defineProperty(this, 'defaultOptions',
+	Object.defineProperty(this, "defaultOptions",
 	{
 		value:
 		{
@@ -263,3 +258,8 @@ CalendarFrameWork.prototype =
 		return;
 	},
 };
+
+function calendarFrameWork(settings)
+{
+	return (new CalendarFrameWork(settings));
+}
