@@ -212,13 +212,16 @@ CustomCalendar.prototype =
 	{
 		for (let eventNode in this.events)
 		{
-			let event = this.events[eventNode];
-			if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
+			if (Object.prototype.hasOwnProperty.call(this.events, eventNode))
 			{
-				var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
-				day.classList.add("event");
-				day.onclick = this.settings.onDayClick;
-				day.dataset.event = event.DTSTART.slice(0, event.DTSTART.indexOf("T"));
+				let event = this.events[eventNode];
+				if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
+				{
+					var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
+					day.classList.add("event");
+					day.onclick = this.settings.onDayClick;
+					day.dataset.event = event.DTSTART.slice(0, event.DTSTART.indexOf("T"));
+				}
 			}
 		}
 	},
