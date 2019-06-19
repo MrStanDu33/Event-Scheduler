@@ -32,10 +32,10 @@ var extend = function ()
 
 function calendarFrameWork(settings)
 {
-	return (new CustomCalendar(settings));
+	return (new CalendarFrameWork(settings));
 }
 
-var CustomCalendar = function (options)
+var CalendarFrameWork = function (options)
 {
 	Object.defineProperty(this, 'defaultOptions',
 	{
@@ -79,7 +79,7 @@ var CustomCalendar = function (options)
 		this.printEventList();
 };
 
-CustomCalendar.prototype =
+CalendarFrameWork.prototype =
 {
 	Event: class Event
 	{
