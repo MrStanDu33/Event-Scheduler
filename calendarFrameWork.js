@@ -30,8 +30,35 @@ var extend = function ()
 	return extended;
 };
 
+function calendarFrameWork(settings)
+{
+	return (new CustomCalendar(settings));
+}
+
 var CustomCalendar = function (options)
 {
+	Object.defineProperty(this, 'defaultOptions',
+	{
+		value:
+		{
+			calendarId: "",
+			monthContainerId: "",
+			eventContainerId: "",
+			weekend: ["S", "S"],
+			days: ["S", "M", "T", "W", "T", "F", "S"],
+			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
+			url: "",
+			altColor: "#B7B7B7",
+			CORSProxy: false,
+			onDayClick: function(){},
+			prevMonthClick: function(){},
+			nextMonthClick: function(){},
+		},
+		writable: false,
+		enumerable: true,
+		configurable: false
+	});
+
 	this.settings = extend(true, {}, this.defaultOptions, options);
 	if (this.settings.CORSProxy)
 		this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
@@ -236,29 +263,3 @@ CustomCalendar.prototype =
 		return;
 	},
 };
-
-function calendarFrameWork(settings)
-{
-	Object.defineProperty(this, "defaultOptions",
-	{
-		value:
-		{
-			calendarId: "",
-			monthContainerId: "",
-			eventContainerId: "",
-			weekend: ["S", "S"],
-			days: ["S", "M", "T", "W", "T", "F", "S"],
-			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
-			url: "",
-			altColor: "#B7B7B7",
-			CORSProxy: false,
-			onDayClick: function(){},
-			prevMonthClick: function(){},
-			nextMonthClick: function(){},
-		},
-		writable: false,
-		enumerable: true,
-		configurable: false
-	});
-	return (new CustomCalendar(settings));
-}
