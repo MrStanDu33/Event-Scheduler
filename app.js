@@ -11,7 +11,7 @@
 			CORSProxy: false,
 			calendarId: "calendar",
 			monthContainerId: "month",
-			eventContainer: "eventContainer",
+			eventContainerId: "eventContainer",
 			onDayClick: function()
 			{
 				//calendar.getEvent(this);

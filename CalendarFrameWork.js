@@ -245,7 +245,7 @@ function calendarFrameWork(settings)
 		{
 			calendarId: "",
 			monthContainerId: "",
-			eventContainer: "",
+			eventContainerId: "",
 			weekend: ["S", "S"],
 			days: ["S", "M", "T", "W", "T", "F", "S"],
 			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
