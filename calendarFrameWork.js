@@ -54,10 +54,10 @@ var CalendarFrameWork = function (options)
 			url: "",
 			altColor: "#B7B7B7",
 			CORSProxy: false,
-			onDayClick: function(){},
+			onDayClick: function(event){},
 			prevMonthClick: function(){},
 			nextMonthClick: function(){},
-			onEvents: function(){},
+			onEvents: 0,
 		},
 		writable: false,
 		enumerable: true,
@@ -70,10 +70,8 @@ var CalendarFrameWork = function (options)
 		this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
 	this.container = document.getElementById(this.settings.calendarId);
 	this.monthContainer = document.getElementById(this.settings.monthContainerId);
-	this.eventContainer = document.getElementById(this.settings.eventContainerId);
 	this.events = [];
 	this.getEvents();
-	this.generateCalendar(new Date());
 };
 
 CalendarFrameWork.prototype =
@@ -97,16 +95,21 @@ CalendarFrameWork.prototype =
 				value = value.replace(/(\r\n|\n|\r)/gm, "");
 				this[key] = value;
 			}
-			let startDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
-			let endDate = this.DTSTART.substr(0, this.DTSTART.indexOf("T"));
-			this.start = {};
-			this.start.year = startDate.substr(0, 4);
-			this.start.month = startDate.substr(4, 2);
-			this.start.day = startDate.substr(6, 2);
-			this.end = {};
-			this.end.year = endDate.substr(0, 4);
-			this.end.month = endDate.substr(4, 2);
-			this.end.day = endDate.substr(6, 2);
+			let startDate = this.DTSTART;
+			let endDate = this.DTEND;
+			this.buildTimeStamp(startDate, "start");
+			this.buildTimeStamp(endDate, "end");
+		}
+
+		buildTimeStamp(str, spot)
+		{
+			this[spot] = {};
+			this[spot].year = str.substr(0, 4);
+			this[spot].month = str.substr(4, 2);
+			this[spot].day = str.substr(6, 2);
+			this[spot].hour = str.substr(9, 2);
+			this[spot].minute = str.substr(11, 2);
+			this[spot].seconds = str.substr(13, 3);
 		}
 	},
 
@@ -122,8 +125,7 @@ CalendarFrameWork.prototype =
 			this.events[event.DTSTART.slice(0, event.DTSTART.indexOf("T"))] = event;
 			i = i + eventData.length;
 		}
-		if (this.container)
-			this.printEventsDays();
+		this.generateCalendar(new Date());
 	},
 
 	getEvents: function()
@@ -263,11 +265,67 @@ CalendarFrameWork.prototype =
 		this.setYear();
 		this.setMonth();
 		if (this.container)
+		{
 			this.buildCalendar();
+			this.printEventsDays();
+		}
 		if (this.monthContainer)
 			this.printMonthTitle();
-		if (this.eventContainer)
-			this.printEventList();
+		switch (typeof this.settings.onEvents)
+		{
+			case "function":
+				this.bindEventFunction();
+				break;
+			case "string":
+				this.bindEventContainer();
+				break;
+			case "object":
+				this.bindEventTemplate();
+				break;
+		}
+	},
+
+	bindEventContainer: function()
+	{
+		this.eventContainer = document.getElementById(this.settings.onEvents);
+		let self = this;
+		this.events.forEach(function(index)
+		{
+			if (index.start.year == self.displayed.year && self.settings.months[index.start.month - 1]== self.displayed.month)
+			{
+				let eventNode = document.createElement("div");
+				eventNode.classList.add("eventSchedule");
+				self.eventContainer.appendChild(eventNode);
+				let day = document.createElement('span');
+				day.textContent = index.start.day;
+				day.classList.add("day");
+				eventNode.appendChild(day);
+				let hour = document.createElement('span');
+				hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
+				hour.classList.add("hour");
+				eventNode.appendChild(hour);
+				let title = document.createElement('span');
+				title.textContent = index.SUMMARY;
+				title.classList.add("title");
+				eventNode.appendChild(title);
+				let desc = document.createElement('p');
+				desc.textContent = index.DESCRIPTION;
+				desc.classList.add("description");
+				eventNode.appendChild(desc);
+			}
+		});
+	},
+
+	bindEventFunction: function()
+	{
+		let self = this;
+		this.events.forEach(function(index)
+		{
+			if (index.start.year == self.displayed.year && self.settings.months[index.start.month - 1]== self.displayed.month)
+			{
+				self.settings.onEvents(index);
+			}
+		});
 	},
 
 	orderDays: function()
@@ -339,15 +397,9 @@ CalendarFrameWork.prototype =
 					var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
 					day.classList.add("event");
 					day.onclick = this.settings.onDayClick;
-					day.dataset.event = event.DTSTART.slice(0, event.DTSTART.indexOf("T"));
 				}
 			}
 		}
-	},
-
-	getEvent: function(e)
-	{
-		return (this.events[e.dataset.event]);
 	},
 
 	printEventList: function()
