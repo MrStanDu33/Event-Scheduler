@@ -6,15 +6,31 @@
 		{
 			url: "/calendar.ics",
 			months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-			days: ["L", "M", "M", "J", "V", "S", "D"],
-			weekend: ["S", "D"],
+			days: {
+				monday: "L",
+				tuesday: "M",
+				wednesday: "M",
+				thursday: "J",
+				friday: "V",
+				saturday: "S",
+				sunday: "D"
+			},
+			firstDayOfWeek: "monday",
+			weekend: ["saturday", "sunday"],
 			calendarId: "calendar",
 			monthContainerId: "month",
-			eventContainerId: "eventContainer",
 			onDayClick: function()
 			{
+				console.log(eventNode);
 				//calendar.getEvent(this);
 			},
+//			onEvents: function(){},
+//			onEvents: "eventContainer",
+//			onEvents: {
+//				dayNumberClass: "day",
+//				dayNumberClass: "day",
+//			},
+
 		});
 		console.log(calendar);
 	};

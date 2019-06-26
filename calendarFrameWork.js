@@ -38,9 +38,18 @@ var CalendarFrameWork = function (options)
 		{
 			calendarId: "",
 			monthContainerId: "",
-			eventContainerId: "",
-			weekend: ["S", "S"],
-			days: ["S", "M", "T", "W", "T", "F", "S"],
+			weekend: ["saturday", "sunday"],
+			days: 
+			{
+				sunday: "S",
+				monday: "M", 
+				tuesday: "T",
+				wednesday: "W",
+				thursday: "T",
+				friday: "F",
+				saturday: "S",
+			},
+			firstDayOfWeek: "sunday",
 			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Décember"],
 			url: "",
 			altColor: "#B7B7B7",
@@ -48,6 +57,7 @@ var CalendarFrameWork = function (options)
 			onDayClick: function(){},
 			prevMonthClick: function(){},
 			nextMonthClick: function(){},
+			onEvents: function(){},
 		},
 		writable: false,
 		enumerable: true,
@@ -55,10 +65,12 @@ var CalendarFrameWork = function (options)
 	});
 
 	this.settings = extend(true, {}, this.defaultOptions, options);
+	this.orderDays();
 	if (this.settings.CORSProxy)
 		this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
 	this.displayed = {};
 	this.displayed.referral = new Date();
+//	this.displayed.referral = new Date("May 26, 2019 03:24:00");
 	this.container = document.getElementById(this.settings.calendarId);
 	this.monthContainer = document.getElementById(this.settings.monthContainerId);
 	this.eventContainer = document.getElementById(this.settings.eventContainerId);
@@ -171,39 +183,113 @@ CalendarFrameWork.prototype =
 		this.container.getElementsByTagName("tbody")[0].appendChild(daysHeader);
 		daysHeader.classList.add("days");
 		var i = 0;
-		var self = this;
-		this.settings.days.forEach(function(day)
+		let self = this;
+		for (let day in this.settings.days)
 		{
-			let td = document.createElement("td");
-			td.style.color = self.settings.altColor;
-			td.textContent = day;
-			daysHeader.appendChild(td);
-		});
+			if (Object.prototype.hasOwnProperty.call(this.settings.days, day))
+			{
+				let td = document.createElement("td");
+				td.style.color = self.settings.altColor;
+				td.textContent = this.settings.days[day][1];
+				daysHeader.appendChild(td);
+			}
+		}
 	},
 
 	printDays: function()
 	{
-		let startDay = this.getFirstDayIndex(this.getFirstDayName(this.displayed.referral));
+		let startDay = this.getFirstDayName(this.getFirstDayIndex(this.displayed.referral));
+		let startDayOffset = this.getFirstDayIndex(this.displayed.referral);
 		var i = 0;
 		var week = 0;
-		while ((i - startDay) != this.getLastDayNumber(this.displayed.referral))
+		let weeks = 0;
+		while ((i - startDayOffset) != this.getLastDayNumber(this.displayed.referral))
 		{
 			if (!(i % 7))
 			{
+				weeks++;
 				week = document.createElement("tr");
 				this.container.getElementsByTagName("tbody")[0].appendChild(week);
 			}
 			let day = document.createElement("td");
-			if (i >= startDay)
-				day.textContent = i - startDay + 1;
-			if (i - startDay + 1 == this.getDay(this.displayed.referral))
+			if ((i < startDayOffset) || (i >= startDayOffset))
+			{
+				if (!((i - startDayOffset + 1) > 0))
+					day.classList.add("toFill");
+				day.textContent = i - startDayOffset + 1;
+			}
+			if (i - startDayOffset + 1 == this.getDay(this.displayed.referral))
 				day.classList.add("active");
 			if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
 				day.style.color = this.settings.altColor;
-			day.dataset.day = i - startDay + 1;
+			day.dataset.day = i - startDayOffset + 1;
 			week.appendChild(day);
 			i++;
 		}
+		
+		//Print end of prev Month
+		let toFill= this.container.getElementsByClassName("toFill");
+		let toFillArray = [];
+		for (let i = 0; i < toFill.length; i++)
+		{
+			toFillArray.push(toFill[i]);
+		}
+		toFillArray.reverse();
+		let startReverse = this.getLastDayNumber(this.getPrevMonth(this.displayed.referral));
+		let self = this;
+		toFillArray.forEach(function(index)
+		{
+			index.textContent = startReverse;
+			index.style.color = self.settings.altColor;
+			startReverse--;
+		})
+
+		//Print 1 week of next Month
+		while (weeks != 7)
+		{
+			if (weeks == 6 && !(i % 7))
+				return;
+			if (!(i % 7))
+			{
+				weeks++;
+				week = document.createElement("tr");
+				this.container.getElementsByTagName("tbody")[0].appendChild(week);
+			}
+			let day = document.createElement("td");
+			day.textContent = i - this.getLastDayNumber(this.displayed.referral) - 1;
+			day.style.color = this.settings.altColor;
+			day.dataset.day = i - startDayOffset + 1;
+			week.appendChild(day);
+			i++;
+		}
+	},
+
+	orderDays: function()
+	{
+		let day = 6;
+		let self = this;
+		var result = Object.keys(this.settings.days).map(function(key)
+		{
+			return [key, self.settings.days[key]];
+		});
+		for (let index = 0; index < result.length; index++)
+		{
+			if (result[index][0] == this.settings.firstDayOfWeek)
+			{
+				i = index;
+				continue;
+			}
+		}
+		let days = [];
+		while (day != -1)
+		{
+			if (!result[i])
+				i = 0;
+			days.push(result[i]);
+			i++;
+			day--;
+		}
+		this.settings.days = days;
 	},
 
 	getDay: function(date)
@@ -211,23 +297,28 @@ CalendarFrameWork.prototype =
 		return(date.getDate());
 	},
 
-	getFirstDayName: function(day)
+	getLastDayNumber: function(date)
+	{
+		return(new Date(date.getFullYear(), date.getMonth()+1, 0).getDate());
+	},
+
+	getFirstDayName: function(index)
+	{
+		return(this.settings.days[index][0]);
+	},
+
+	getFirstDayIndex: function(day)
 	{
 		let date = new Date(day);
 		let month = date.getMonth();
 		let year = date.getFullYear();
 		let FirstDay = new Date(year, month, 1);
-		return(this.settings.days[FirstDay.getDay() - 1]);
+		return(FirstDay.getDay() - 1);
 	},
 
-	getLastDayNumber: function(date)
+	getPrevMonth: function(date)
 	{
-		return(new Date(date.getMonth(), date.getYear(), 0).getDate());
-	},
-
-	getFirstDayIndex: function(day)
-	{
-		return(this.settings.days.indexOf(day));
+		return(new Date(date.getFullYear(), date.getMonth(), 0));
 	},
 
 	printEventsDays: function()
