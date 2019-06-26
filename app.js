@@ -21,10 +21,9 @@
 			monthContainerId: "month",
 			onDayClick: function()
 			{
-				console.log(eventNode);
-				//calendar.getEvent(this);
+				console.log(calendar.getEvent(this));
 			},
-//			onEvents: function(){},
+			onEvents: function(){},
 //			onEvents: "eventContainer",
 //			onEvents: {
 //				dayNumberClass: "day",

@@ -68,22 +68,12 @@ var CalendarFrameWork = function (options)
 	this.orderDays();
 	if (this.settings.CORSProxy)
 		this.settings.url = "/app.php?CORSProxy="+encodeURIComponent(this.settings.url);
-	this.displayed = {};
-	this.displayed.referral = new Date();
-//	this.displayed.referral = new Date("May 26, 2019 03:24:00");
 	this.container = document.getElementById(this.settings.calendarId);
 	this.monthContainer = document.getElementById(this.settings.monthContainerId);
 	this.eventContainer = document.getElementById(this.settings.eventContainerId);
 	this.events = [];
 	this.getEvents();
-	this.setYear();
-	this.setMonth();
-	if (this.container)
-		this.buildCalendar();
-	if (this.monthContainer)
-		this.printMonthTitle();
-	if (this.eventContainer)
-		this.printEventList();
+	this.generateCalendar(new Date());
 };
 
 CalendarFrameWork.prototype =
@@ -220,7 +210,7 @@ CalendarFrameWork.prototype =
 			}
 			if (i - startDayOffset + 1 == this.getDay(this.displayed.referral))
 				day.classList.add("active");
-			if (this.settings.weekend.indexOf(this.settings.days[(i%7)]) !== -1)
+			if (this.settings.weekend.indexOf(this.settings.days[(i%7)][0]) !== -1)
 				day.style.color = this.settings.altColor;
 			day.dataset.day = i - startDayOffset + 1;
 			week.appendChild(day);
@@ -241,6 +231,7 @@ CalendarFrameWork.prototype =
 		{
 			index.textContent = startReverse;
 			index.style.color = self.settings.altColor;
+			index.style.fontWeight = 100;
 			startReverse--;
 		})
 
@@ -258,10 +249,25 @@ CalendarFrameWork.prototype =
 			let day = document.createElement("td");
 			day.textContent = i - this.getLastDayNumber(this.displayed.referral) - 1;
 			day.style.color = this.settings.altColor;
+			day.style.fontWeight = 100;
 			day.dataset.day = i - startDayOffset + 1;
 			week.appendChild(day);
 			i++;
 		}
+	},
+
+	generateCalendar: function(date)
+	{
+		this.displayed = {};
+		this.displayed.referral = date;
+		this.setYear();
+		this.setMonth();
+		if (this.container)
+			this.buildCalendar();
+		if (this.monthContainer)
+			this.printMonthTitle();
+		if (this.eventContainer)
+			this.printEventList();
 	},
 
 	orderDays: function()
