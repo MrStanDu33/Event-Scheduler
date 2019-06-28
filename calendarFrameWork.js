@@ -296,22 +296,34 @@ CalendarFrameWork.prototype =
 				let eventNode = document.createElement("div");
 				eventNode.classList.add("eventSchedule");
 				self.eventContainer.appendChild(eventNode);
-				let day = document.createElement('span');
-				day.textContent = index.start.day;
-				day.classList.add("day");
-				eventNode.appendChild(day);
+				if (index.DESCRIPTION)
+				{
+					let day = document.createElement('span');
+					day.textContent = index.start.day;
+					day.classList.add("day");
+					eventNode.appendChild(day);
+				}
 				let hour = document.createElement('span');
-				hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
+				if (index.CATEGORIES)
+					hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
+				else
+					hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h';
 				hour.classList.add("hour");
 				eventNode.appendChild(hour);
-				let title = document.createElement('span');
-				title.textContent = index.SUMMARY;
-				title.classList.add("title");
-				eventNode.appendChild(title);
-				let desc = document.createElement('p');
-				desc.textContent = index.DESCRIPTION;
-				desc.classList.add("description");
-				eventNode.appendChild(desc);
+				if (index.SUMMARY)
+				{
+					let title = document.createElement('span');
+					title.textContent = index.SUMMARY;
+					title.classList.add("title");
+					eventNode.appendChild(title);
+				}
+				if (index.DESCRIPTION)
+				{
+					let desc = document.createElement('p');
+					desc.textContent = index.DESCRIPTION;
+					desc.classList.add("description");
+					eventNode.appendChild(desc);
+				}
 			}
 		});
 	},
