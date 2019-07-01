@@ -428,9 +428,23 @@ CalendarFrameWork.prototype =
 				let event = this.events[eventNode];
 				if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
 				{
-					var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
-					day.classList.add("event");
-					day.onclick = this.settings.onDayClick;
+					if (event.start.hour)
+					{
+						var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
+						day.classList.add("event");
+						day.onclick = this.settings.onDayClick;
+					}
+					else
+					{
+						var i = Number(event.start.day);
+						while (i != Number(event.end.day) + 1)
+						{
+							var day = this.container.querySelector("td[data-day=\""+Number(i)+"\"]");
+							day.classList.add("event");
+							day.onclick = this.settings.onDayClick;
+							i++;
+						}
+					}
 				}
 			}
 		}
