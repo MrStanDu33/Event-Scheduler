@@ -274,8 +274,6 @@ CalendarFrameWork.prototype =
 		this.displayed.referral = date;
 		this.setYear();
 		this.setMonth();
-		this.displayed.month = "Juin";
-		console.log("remove l277");
 		if (this.container)
 		{
 			this.buildCalendar();

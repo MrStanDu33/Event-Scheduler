@@ -23,19 +23,15 @@
 			{
 				console.log(event);
 			},
-/*
-			onEvents: function(event)
+/*			onEvents: function(event)
 			{
 				console.log(event)
-			},
-*/
+			},*/
 			onEvents: "calendar",
-/*
-			onEvents: {
+/*			onEvents: {
 				dayNumberClass: "day",
 				dayNumberClass: "day",
-			},
-*/
+			},*/
 		});
 		console.log(calendar);
 	};
