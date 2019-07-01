@@ -99,7 +99,7 @@ CalendarFrameWork.prototype =
 				}
 				let value = data.slice(data.indexOf(":", i) + 1, endValue);
 				i = i + originalKey.length + value.length + 2;
-				value = value.replace(/(\r\n|\n|\r|\\)/gm, "");
+				value = value.replace(/(\\r\\n|\\n|\\r|\\)/gm, "");
 				this[key] = value;
 			}
 			let startDate = this.DTSTART;
