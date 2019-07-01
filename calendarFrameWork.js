@@ -83,16 +83,23 @@ CalendarFrameWork.prototype =
 			var i = 0;
 			while (i < data.length)
 			{
-				let key = data.slice(i, data.indexOf(":", i));
+				let originalKey = data.slice(i, data.indexOf(":", i));
+				var key = "";
+				if (originalKey.includes("DTSTART;TZID") || originalKey.includes("DTSTART;VALUE=DATE"))
+					key = "DTSTART";
+				else if (originalKey.includes("DTEND;TZID") || originalKey.includes("DTEND;VALUE=DATE"))
+					key = "DTEND";
+				else
+					key = originalKey;
 				let endValue = data.indexOf("\n", i);
-				while (data[endValue + 1] === " ")
+				while (data[endValue + 1] == " ")
 				{
 					data = data.slice(0, endValue) + data.slice(endValue + 2);
-					endValue = data.indexOf("\n", endValue - 1) + 1;
+					endValue = data.indexOf("\n", endValue + 1);
 				}
 				let value = data.slice(data.indexOf(":", i) + 1, endValue);
-				i = i + key.length + value.length + 2;
-				value = value.replace(/(\r\n|\n|\r)/gm, "");
+				i = i + originalKey.length + value.length + 2;
+				value = value.replace(/(\r\n|\n|\r|\\)/gm, "");
 				this[key] = value;
 			}
 			let startDate = this.DTSTART;
@@ -107,9 +114,12 @@ CalendarFrameWork.prototype =
 			this[spot].year = str.substr(0, 4);
 			this[spot].month = str.substr(4, 2);
 			this[spot].day = str.substr(6, 2);
-			this[spot].hour = str.substr(9, 2);
-			this[spot].minute = str.substr(11, 2);
-			this[spot].seconds = str.substr(13, 3);
+			if (str.includes("T"))
+			{
+				this[spot].hour = str.substr(9, 2);
+				this[spot].minute = str.substr(11, 2);
+				this[spot].seconds = str.substr(13, 3);
+			}
 		}
 	},
 
@@ -264,6 +274,8 @@ CalendarFrameWork.prototype =
 		this.displayed.referral = date;
 		this.setYear();
 		this.setMonth();
+		this.displayed.month = "Juin";
+		console.log("remove l277");
 		if (this.container)
 		{
 			this.buildCalendar();
@@ -296,18 +308,23 @@ CalendarFrameWork.prototype =
 				let eventNode = document.createElement("div");
 				eventNode.classList.add("eventSchedule");
 				self.eventContainer.appendChild(eventNode);
-				if (index.DESCRIPTION)
-				{
-					let day = document.createElement('span');
+				let day = document.createElement('span');
+				if (index.start.hour && index.start.minute && index.start.seconds && index.end.hour && index.end.minute && index.end.seconds)
 					day.textContent = index.start.day;
-					day.classList.add("day");
-					eventNode.appendChild(day);
-				}
-				let hour = document.createElement('span');
-				if (index.CATEGORIES)
-					hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
 				else
-					hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h';
+					day.textContent = index.start.day + ' - ' + index.end.day;
+				day.classList.add("day");
+				eventNode.appendChild(day);
+				let hour = document.createElement('span');
+				if (index.start.hour && index.start.minute && index.start.seconds && index.end.hour && index.end.minute && index.end.seconds)
+				{
+					if (index.CATEGORIES)
+						hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
+					else
+						hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h';
+				}
+				else
+					hour.textContent = 'toute la journée ';
 				hour.classList.add("hour");
 				eventNode.appendChild(hour);
 				if (index.SUMMARY)
@@ -326,6 +343,13 @@ CalendarFrameWork.prototype =
 				}
 			}
 		});
+		if (this.container.childNodes.length % 2)
+		{
+			let eventNode = document.createElement("div");
+			eventNode.classList.add("eventSchedule", "emptyPlaceholder");
+			self.eventContainer.appendChild(eventNode);
+			eventNode.style.border = "none";
+		}
 	},
 
 	bindEventFunction: function()
