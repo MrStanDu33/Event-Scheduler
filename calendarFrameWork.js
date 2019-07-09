@@ -306,35 +306,35 @@ CalendarFrameWork.prototype =
 				let eventNode = document.createElement("div");
 				eventNode.classList.add("eventSchedule");
 				self.eventContainer.appendChild(eventNode);
-				let day = document.createElement('span');
+				let day = document.createElement("span");
 				if (index.start.hour && index.start.minute && index.start.seconds && index.end.hour && index.end.minute && index.end.seconds)
 					day.textContent = index.start.day;
 				else
-					day.textContent = index.start.day + ' - ' + index.end.day;
+					day.textContent = index.start.day + " - " + index.end.day;
 				day.classList.add("day");
 				eventNode.appendChild(day);
-				let hour = document.createElement('span');
+				let hour = document.createElement("span");
 				if (index.start.hour && index.start.minute && index.start.seconds && index.end.hour && index.end.minute && index.end.seconds)
 				{
 					if (index.CATEGORIES)
-						hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h ' + index.CATEGORIES;
+						hour.textContent = index.start.hour + "h - " + index.end.hour +"h " + index.CATEGORIES;
 					else
-						hour.textContent = index.start.hour + 'h - ' + index.end.hour +'h';
+						hour.textContent = index.start.hour + "h - " + index.end.hour +"h";
 				}
 				else
-					hour.textContent = 'toute la journée ';
+					hour.textContent = "toute la journée ";
 				hour.classList.add("hour");
 				eventNode.appendChild(hour);
 				if (index.SUMMARY)
 				{
-					let title = document.createElement('span');
+					let title = document.createElement("span");
 					title.textContent = index.SUMMARY;
 					title.classList.add("title");
 					eventNode.appendChild(title);
 				}
 				if (index.DESCRIPTION)
 				{
-					let desc = document.createElement('p');
+					let desc = document.createElement("p");
 					desc.textContent = index.DESCRIPTION;
 					desc.classList.add("description");
 					eventNode.appendChild(desc);
