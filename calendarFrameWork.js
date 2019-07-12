@@ -245,7 +245,7 @@ CalendarFrameWork.prototype =
 			index.style.color = self.settings.altColor;
 			index.style.fontWeight = 100;
 			startReverse--;
-		})
+		});
 
 		//Print 1 week of next Month
 		while (weeks != 7)
@@ -364,6 +364,7 @@ CalendarFrameWork.prototype =
 
 	orderDays: function()
 	{
+		let i = 0;
 		let day = 6;
 		let self = this;
 		var result = Object.keys(this.settings.days).map(function(key)
@@ -428,18 +429,19 @@ CalendarFrameWork.prototype =
 				let event = this.events[eventNode];
 				if (event.start.year == this.displayed.year && this.settings.months[Number(event.start.month) - 1] == this.displayed.month)
 				{
+					let day = null;
 					if (event.start.hour)
 					{
-						var day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
+						day = this.container.querySelector("td[data-day=\""+Number(event.start.day)+"\"]");
 						day.classList.add("event");
 						day.onclick = this.settings.onDayClick;
 					}
 					else
 					{
-						var i = Number(event.start.day);
+						let i = Number(event.start.day);
 						while (i != Number(event.end.day) + 1)
 						{
-							var day = this.container.querySelector("td[data-day=\""+Number(i)+"\"]");
+							day = this.container.querySelector("td[data-day=\""+Number(i)+"\"]");
 							day.classList.add("event");
 							day.onclick = this.settings.onDayClick;
 							i++;
